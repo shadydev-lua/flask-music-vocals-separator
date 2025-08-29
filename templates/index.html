@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>musicsep</title>
+  <style>
+  * { box-sizing: border-box; }
+
+  /* ===== GLOBAL ===== */
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #FDC685, #FE956E, #FA6676, #F34C78, #D43E8B);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color: #333;
+  }
+
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  header {
+    text-align: center;
+    padding: 40px 20px 20px;
+    color: #fff;
+  }
+  h1 {
+    font-size: 2.8rem;
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  /* ===== MAIN ===== */
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  form {
+    width: 100%;
+    max-width: 650px;
+    display: flex;
+    background: #fff;
+    border-radius: 50px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+  }
+  form:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+  }
+
+  input[type="text"] {
+    flex: 1;
+    border: none;
+    padding: 18px 22px;
+    font-size: 1rem;
+    outline: none;
+  }
+
+  button {
+    background: linear-gradient(135deg, #FA6676, #D43E8B);
+    border: none;
+    color: white;
+    padding: 0 30px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: transform 0.2s, background 0.3s;
+  }
+  button:hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #FE956E, #F34C78);
+  }
+
+  footer {
+    text-align: center;
+    padding: 15px;
+    font-size: 0.9rem;
+    background: rgba(255, 255, 255, 0.3);
+    color: #fff;
+    font-weight: 500;
+  }
+
+  /* ===== MODALS ===== */
+  .modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    z-index: 999;
+  }
+  .modal-content {
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    position: relative;
+    animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .modal-content h2 {
+    margin: 0 0 12px;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #333;
+  }
+  .modal-content p {
+    margin: 0 0 6px;
+    font-size: 0.95rem;
+    color: #555;
+  }
+  .modal-content small {
+    font-size: 0.8rem;
+    color: #888;
+    display: block;
+    margin-top: 4px;
+  }
+
+  /* Close button */
+  .close-btn {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    color: #777;
+    transition: color 0.2s;
+  }
+  .close-btn:hover { color: #222; }
+
+  /* Download button restyle */
+  .download-btn {
+    display: inline-block;
+    padding: 7px 14px;
+    border: none;
+    border-radius: 4px;
+    background: #e46a7b; /* subtle tone */
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 10px;
+  }
+  .download-btn:hover {
+    background: #d15469; /* moderate darkening */
+  }
+  .download-btn:active {
+    transform: scale(0.97);
+  }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>musicsep</h1>
+  </header>
+
+  <main>
+    <form id="urlForm" method="POST" action="/process">
+      <input type="text" name="url" placeholder="Paste YouTube URL..." required>
+      <button type="submit">Submit</button>
+    </form>
+  </main>
+
+  <footer>
+    by the madcoder : beta-version
+  </footer>
+
+  <!-- Error Modal -->
+  <div id="errorModal" class="modal">
+    <div class="modal-content">
+      <button class="close-btn" onclick="closeModal('errorModal')" aria-label="Close">&times;</button>
+      <h2>Error</h2>
+      <p id="errorMessage">Error happened: Invalid URL.</p>
+    </div>
+  </div>
+
+  <!-- Process Modal -->
+  <div id="processModal" class="modal">
+    <div class="modal-content">
+      <button class="close-btn" id="closeProcessBtn" style="display:none;" aria-label="Close">&times;</button>
+      <h2 id="processTitle">Processing...</h2>
+      <p id="processMessage">Please wait while we process your file...</p>
+      <small id="processNote">(This might take up to several minutes)</small>
+      <a href="/download" class="download-btn" id="downloadLink" style="display:none;" download>Download</a>
+    </div>
+  </div>
+
+  <script>
+  const form = document.getElementById("urlForm");
+  const errorMessage = document.getElementById("errorMessage");
+  const processModal = document.getElementById("processModal");
+  const processTitle = document.getElementById("processTitle");
+  const processMessage = document.getElementById("processMessage");
+  const processNote = document.getElementById("processNote");
+  const downloadLink = document.getElementById("downloadLink");
+  const closeProcessBtn = document.getElementById("closeProcessBtn");
+
+  function closeModal(id) { document.getElementById(id).style.display = "none"; }
+  function showModal(id) { document.getElementById(id).style.display = "flex"; }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      // Reset modal state
+      closeModal("errorModal");
+      downloadLink.style.display = "none";
+      closeProcessBtn.style.display = "none";
+      processMessage.style.display = "block";
+      processNote.style.display = "block";
+      processTitle.innerText = "Processing...";
+
+      showModal("processModal");
+
+      const formData = new FormData(form);
+      const response = await fetch(form.action, {
+        method: "POST",
+        body: formData
+      });
+
+      if (!response.ok) {
+        closeModal("processModal");
+        showModal("errorModal");
+        errorMessage.innerText = "Error happened: Invalid URL.";
+        return;
+      }
+
+      // Poll /status every 1 second
+      const interval = setInterval(async () => {
+        try {
+          const check = await fetch("/status");
+          if (!check.ok) return;
+
+          const data = await check.json();
+          if (data.ready) {
+            processTitle.innerText = "Your file is ready!";
+            processMessage.style.display = "none";
+            processNote.style.display = "none";
+
+            downloadLink.style.display = "inline-block";
+            downloadLink.href = "/download";
+            closeProcessBtn.style.display = "inline-block";
+
+            clearInterval(interval);
+          }
+        } catch (err) {
+          console.error("Polling error:", err);
+        }
+      }, 1000);
+
+      // Button handlers
+      downloadLink.onclick = () => closeModal("processModal");
+      closeProcessBtn.onclick = () => closeModal("processModal");
+    });
+  });
+  </script>
+</body>
+</html>
+
+
