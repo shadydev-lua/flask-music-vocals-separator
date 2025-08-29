@@ -72,52 +72,6 @@ def ensure_wav(audio_path):
 
     return wav_path
 
-
-    # Always use absolute paths
-    input_path = Path(input_wav).resolve()
-    output_dir = Path(output_dir).resolve()
-
-    # Make unique temp folder
-    unique_id = str(uuid.uuid4())[:8]
-    temp_folder = output_dir / f"temp_{unique_id}"
-    temp_folder.mkdir(parents=True, exist_ok=True)
-
-    base_name = input_path.stem
-    vocals_path = temp_folder / "vocals.wav"
-    accompaniment_path = temp_folder / "accompaniment.wav"
-
-    # Load waveform using soundfile
-    waveform, sr = sf.read(str(input_path))
-    # Convert to torch tensor with shape (channels, samples)
-    waveform = torch.tensor(waveform.T, dtype=torch.float32)
-
-    # Run Open-Unmix 2-stem separation
-    # 'vocals' vs 'accompaniment'
-    estimates = separate(waveform, target='vocals')  # default is vocals
-    vocals_tensor = estimates[0]  # Assuming the first estimate is vocals
-    accompaniment_tensor = estimates[1]  # Assuming the second estimate is accompaniment
-
-    # Convert back to numpy (samples, channels) for saving
-    vocals_np = vocals_tensor.T.numpy()
-    accompaniment_np = accompaniment_tensor.T.numpy()
-
-    # Save stems using soundfile
-    sf.write(str(vocals_path), vocals_np, sr)
-    sf.write(str(accompaniment_path), accompaniment_np, sr)
-
-    # Delete original input
-    if input_path.exists():
-        input_path.unlink()
-
-    # Move vocals up into output_dir as <basename>.wav
-    final_vocals_path = output_dir / f"{base_name}.wav"
-    shutil.move(str(vocals_path), str(final_vocals_path))
-
-    # Cleanup temp folder
-    shutil.rmtree(temp_folder, ignore_errors=True)
-
-    return str(final_vocals_path)
-
 def highpass_filter(y, sr, cutoff=100, order=4):
    
     nyq = 0.5 * sr
