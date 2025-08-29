@@ -1,0 +1,14 @@
+# music-vocals-separation-flask-webapp
+this is easy plug and play full webapp the operating steps are easy :
+
+1 - this app is made with python 3.12 so it is better to use that version for maximum compatibility
+
+2 - initiate your own venv and  update pip (python -m pip install --upgrade pip)
+
+3 - download the file (operating_req) using pip
+
+4 - download ffmpeg and add it to path and check using cmd (ffmpeg -version)
+
+5 - now you are ready to run it you can run it via flask experimental server or using waitress which is already installed and have its configuration file (serve.py) if you decide to run it from from waitress just do (python serve.py)
+ 
+:: enjoy :: 
