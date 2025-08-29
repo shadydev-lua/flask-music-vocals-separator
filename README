@@ -10,5 +10,8 @@ this is easy plug and play full webapp the operating steps are easy :
 4 - download ffmpeg and add it to path and check using cmd (ffmpeg -version)
 
 5 - now you are ready to run it you can run it via flask experimental server or using waitress which is already installed and have its configuration file (serve.py) if you decide to run it from from waitress just do (python serve.py)
- 
+
+WARNING : FOR SOME REASON GITHUB DOESNT HOST EMPTY FOLDERS BUT YOU NEED TO MAKE A FOLDER UNDER THIS SPECIFIC NAME (download_pool) IN THE PROJECT FOLDER IN ORDER FOR IT TO WORK
+
+
 :: enjoy :: 
